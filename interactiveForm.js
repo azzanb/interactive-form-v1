@@ -23,7 +23,7 @@ title.addEventListener('change', (e) => {
 	}
 });
 
-//---------------MATCHING T-SHIRT AND COLORS------------//
+//---------------MATCHING T-SHIRT AND COLORS (unfinished) ------------//
 
 // //Match the chosen t-shirt design with its corresponding avaliable colors
 // const shirt = document.querySelector('.shirt');
@@ -65,6 +65,8 @@ title.addEventListener('change', (e) => {
 // var sibling = $('.activities').find('legend').next();
 
 // console.log(sibling);
+
+
 //----------------REGISTER FOR ACTIVITIES--------------//
 
 const activities = document.querySelector('.activities');
@@ -78,7 +80,6 @@ activities.addEventListener('change', (e) => {
 
 // 1) Create a money total at the bottom of the list of 
 	let total = 0;
-
 	for(let i = 0; i < input.length; i++){
 		if(input[i].checked){
 			const labelText = input[i].parentNode.textContent;
@@ -86,21 +87,11 @@ activities.addEventListener('change', (e) => {
 			total = Number(total) + dollars;				
 		
 //------------Conflicting time and dates-----------//
-			const labelTues = labelText.match(/Tuesday 9am-12pm/g);
-			const parent = input[i].parentNode.parentNode;
-			const fieldText = parent.children;
+			const checked = $('.activities label input:checked').parent().parent(); //gives activities 
+			const realChecked = checked.find('label').find($('input:checked')); //gives checked checkbox
+			const tuesPm = $(".activities label:contains('Tuesday 1pm-4pm')"); //gives labels this this date & time
+			const tuesAm = $(".activities label:contains('Tuesday 9am-12pm')"); //gives labels with this date & time
 			
-
-			const checked = $('.activities label input:checked').parent().parent();
-			const realChecked = checked.find('label').find($('input:checked'));
-			const tuesPm = $(".activities label:contains('Tuesday 1pm-4pm')");
-			const tuesAm = $(".activities label:contains('Tuesday 9am-12pm')");
-			
-			if(realChecked.text().contains(tuesPm)){
-				console.log("Good");
-			}
-			
-			//console.log(checked);
 		}
 	}
 	p.textContent = "Total: $" + Number(total);
@@ -110,7 +101,7 @@ activities.addEventListener('change', (e) => {
 
 
 
-//---------------PAYMENT INFO----------------//
+//---------------PAYMENT INFO (unfinished) ----------------//
 
 const payment = document.getElementById('payment');
 const credit = document.getElementById('credit-card');
@@ -147,36 +138,39 @@ payment.addEventListener('change', (e) => {
 
 
 
-//----------------VALIDATIONS----------------//
+//----------------VALIDATIONS (unfinished) ----------------//
 
 const button = document.querySelector('button');
 const name = document.getElementById('name');
 
+//Email validation
 function emailVal(){
      	const mail = document.getElementById('mail');
      	const mailVal = mail.value;
-        atpos = mailVal.indexOf("@");
-        dotpos = mailVal.lastIndexOf(".");    
-        if (atpos < 1 || dotpos - atpos < 2  || atpos === -1){
+        at = mailVal.indexOf("@");
+        dot = mailVal.lastIndexOf(".");    
+        if (at < 1 || dot - at < 2  || at === -1){
            alert("Please enter a valid email!");
            return false;
         }
          return( true );
 }
 
+//Registered Activities validation
 function inputVal(){
 		let howMany = $('input:checked').length;
 		if(howMany === 0){
 			alert("Registered Activities must be checked!");
 		}
 } 
+
+//Card info validation ----- NEED HELP
 $('#cc-num').attr('minlength', '13');
 $('#cc-num').attr('maxlength', '16');
 $('#zip').attr('maxlength', '5');
 $('#zip').attr('minlength', '5');
 $('#cvv').attr('maxlength', '3');
 $('#cvv').attr('minlength','3');
-
 
 function cardVal(value, min, max){
 	if(parseInt(value) < min || isNaN(parseInt(value))){
@@ -189,7 +183,7 @@ function cardVal(value, min, max){
     else return value;
 }
 	
-
+//Click event listener to fire off validations
 button.addEventListener('click', () => {
 	if(name.value === ""){
 		alert("Basic Info: Name is empty!");
