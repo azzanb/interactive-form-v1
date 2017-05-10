@@ -29,7 +29,6 @@ const other = document.createElement('input');
 
 //----EXTRA CREDIT: Provide real-time error message
 //I decided to change the label text if the input name was deleted. 
-
 $('#name').bind('input propertychange', function(){
 	const space = $('#name').val();
 	const nameChange =$('#name').prev();
@@ -44,8 +43,6 @@ $('#name').bind('input propertychange', function(){
 
 
 					//---------------------------MATCHING T-SHIRT AND COLORS-----------------------------//
-
-//Match the chosen t-shirt design with its corresponding avaliable colors
 const colors = $('#color').children();
 const design = $('#design');
 const colorLabel = $('#colors-js-puns label');
@@ -55,6 +52,8 @@ colorLabel.hide();
 $('#color').hide();
 
 //This event listener will match the colors with their respective design of choice
+//I created two loops, one for the first three colors, the other for the last three colors
+//Match the chosen t-shirt design with its corresponding avaliable colors
 $(design).on("change", () => {
 	colorLabel.show(); // show after choosing design
 	$('#color').show(); //show after choosing design
@@ -152,7 +151,7 @@ const bitcoinDiv = fieldset[5];
 //Hide bitcoin and paypal info. Show credit card info by default
 $('#credit-card').nextAll().hide();
 
-//Set max length for zip and cvv numbers
+//Set max length for zip and cvv numbers (This isn't necessary, but I did it anyway)
 $('#zip').attr('maxlength', 5);
 $('#cvv').attr('maxlength', 3);
 
@@ -172,24 +171,22 @@ paymentField("credit card", paypalDiv, bitcoinDiv, credit);
 paymentField("bitcoin", credit, paypalDiv, bitcoinDiv);
 
 
-							//---------------------VALIDATIONS (unfinished)----------------------//
 
-const button = document.querySelector('button');
+							//---------------------VALIDATIONS----------------------//
 const name = document.getElementById('name');
-
 
 //Email validation
 function emailVal(){
-     	const mail = document.getElementById('mail');
-     	const mailVal = mail.value;
-        at = mailVal.indexOf("@");
-        dot = mailVal.lastIndexOf(".");    
-        if (at < 1 || dot - at < 2  || at === -1){
-          $(mail[0]).css({border: "10px solid red"});
-           alert("Please enter a valid email!");
-           return false;
-        }
-         return( true );
+ 	const mail = document.getElementById('mail');
+ 	const mailVal = mail.value;
+    at = mailVal.indexOf("@");
+    dot = mailVal.lastIndexOf(".");    
+    if (at < 1 || dot - at < 2  || at === -1){
+    	$('input#mail').css({border: "10px solid #203590"}); //create CSS border when email input is incorrect
+        alert("Please enter a valid email!");
+        return false;
+    }
+    else{return true}
 }
 
 //Registered Activities validation
@@ -197,32 +194,47 @@ function inputVal(){
 	let howMany = $('input:checked').length;
 	if(howMany === 0){
 		alert("AT LEAST 1 activity must be checked!");
+		return false;
 	}
+	else{return true}
 } 
 
 //Card info validation 
 const cardVal = (ele, value) => {
 	if( Number(ele.val().length) < value ){
 	alert("Card No.: 13-15 digits, Zip Code: 5 digits!, CVV: 3 digits!");
-	return false;
 	}
+	else{return true}
 };
 
-	
-//Click event listener to fire off validations
-button.addEventListener('click', () => {
+//Name validation
+const nameVal = () => {
 	if(name.value === ""){
 		alert("Basic Info: Name is empty!");
+		return false;
 	}
+	else{return true}
+};
+
+//Put all function validations in one function, then callback when submitting the form
+const allVal = () => {
+	nameVal();
 	emailVal();
 	inputVal();
-	
-//----EXTRA CREDIT: Program information based on error when form is submitted
-	if( Number($('#cc-num').val().length) > 15){
-		alert("Credit Card no. has " + (Number($('#cc-num').val().length) - 15) + " digits more than the range: 13-15 digits!" );
-	}
-
 	cardVal($('#cvv'), 3);
 	cardVal($('#zip'), 5);
 	cardVal($('#cc-num'), 13);
+
+	//----EXTRA CREDIT: Program information based on error when form is submitted
+	if( (Number($('#cc-num').val().length)) > 15){
+		alert("Credit Card no. has " + (Number($('#cc-num').val().length) - 15) + " digits more than the range: 13-15 digits!" );
+	}
+};
+
+//Make sure html text fields are still present after javascript is turned off
+$('form').submit((e) => {
+	//allVal function callback
+	allVal();
+	e.preventDefault();
 });
+
