@@ -28,7 +28,7 @@ const other = document.createElement('input');
 
 
 //----EXTRA CREDIT: Provide real-time error message
-//I decided to change the label text if the input name was deleted. 
+//Write a name, delete the name, and the name label will change with a message  
 $('#name').bind('input propertychange', function(){
 	const space = $('#name').val();
 	const nameChange =$('#name').prev();
@@ -53,7 +53,6 @@ $('#color').hide();
 
 //This event listener will match the colors with their respective design of choice
 //I created two loops, one for the first three colors, the other for the last three colors
-//Match the chosen t-shirt design with its corresponding avaliable colors
 $(design).on("change", () => {
 	colorLabel.show(); // show after choosing design
 	$('#color').show(); //show after choosing design
@@ -84,9 +83,7 @@ const label = activities.getElementsByTagName('label');
 const p = document.createElement("p");
 activities.appendChild(p);
 
-
 activities.addEventListener('change', (e) => {
-
 // 1) Create a money total at the bottom of the list of activities
 	let total = 0;
 	for(let i = 0; i < input.length; i++){
@@ -106,29 +103,29 @@ activities.addEventListener('change', (e) => {
 	const yesTuesAm = $('label:contains("Tuesday 9am-12pm")').has('input:checked');
 
 //This function takes 3 parameters, for checking and unchecking
-	let noConflict = (eleA, eleB, eleC) => {
-		if(!eleB[1].checked){
-				$(eleA).css("textDecoration", "none");
-				$(eleB[1]).removeAttr("disabled");
+	let noConflict = (notCheck, normal, yesCheck) => {
+		if(!normal[1].checked){
+				$(notCheck).css("textDecoration", "none");
+				$(normal[1]).removeAttr("disabled");
 			}
-			if(!eleB[0].checked){
-				$(eleA).css("textDecoration", "none");
-				$(eleB[0]).removeAttr("disabled");
+			if(!normal[0].checked){
+				$(notCheck).css("textDecoration", "none");
+				$(normal[0]).removeAttr("disabled");
 			}
-			if(eleB[0].checked){
-				$(eleB[1]).attr("checked", false);
-				$(eleB[1]).attr("disabled", "disabled");
-				$(eleA).css("textDecoration", "line-through");
-				$(eleC).css("textDecoration", "none");
+			if(normal[0].checked){
+				$(normal[1]).attr("checked", false);
+				$(normal[1]).attr("disabled", "disabled");
+				$(notCheck).css("textDecoration", "line-through");
+				$(yesCheck).css("textDecoration", "none");
 			}
-			
-			if(eleB[1].checked){
-				$(eleB[0]).attr("checked", false);
-				$(eleB[0]).attr("disabled", "disabled");
-				$(eleA).css("textDecoration", "line-through");
-				$(eleC).css("textDecoration", "none");
+			if(normal[1].checked){
+				$(normal[0]).attr("checked", false);
+				$(normal[0]).attr("disabled", "disabled");
+				$(notCheck).css("textDecoration", "line-through");
+				$(yesCheck).css("textDecoration", "none");
 			}
 		};
+		//Call the noConflict function
 		noConflict(notTuesPm, tuesPm, yesTuesPm);
 		noConflict(notTuesAm, tuesAm, yesTuesAm);
 	}
@@ -140,7 +137,7 @@ activities.addEventListener('change', (e) => {
 });
 
 
-							//--------------------PAYMENT INFO---------------------//
+							    //--------------------PAYMENT INFO---------------------//
 
 const payment = document.getElementById('payment');
 const credit = document.getElementById('credit-card');
@@ -151,9 +148,11 @@ const bitcoinDiv = fieldset[5];
 //Hide bitcoin and paypal info. Show credit card info by default
 $('#credit-card').nextAll().hide();
 
-//Set max length for zip and cvv numbers (This isn't necessary, but I did it anyway)
+//Set max length for card info fields
 $('#zip').attr('maxlength', 5);
 $('#cvv').attr('maxlength', 3);
+$('#cc-num').attr('maxlength', 16);
+//$('#cc-num').attr('minlength', 13);
 
 //Display payment option based on selected option
 const paymentField = (string, eleA, eleB, eleC) => {
@@ -171,70 +170,102 @@ paymentField("credit card", paypalDiv, bitcoinDiv, credit);
 paymentField("bitcoin", credit, paypalDiv, bitcoinDiv);
 
 
+						       	//---------------------VALIDATIONS----------------------//
 
-							//---------------------VALIDATIONS----------------------//
-const name = document.getElementById('name');
+//Name validation
+const nameVal = () => {
+	const name = document.getElementById('name');
+	if(name.value === ""){
+		$('input#name').css({border: "5px solid #203590"});
+		name.placeholder = "Please Enter";
+		return false;
+	}
+	else{return true;}
+};
 
 //Email validation
-function emailVal(){
- 	const mail = document.getElementById('mail');
+const emailVal = () => {
+	const mail = document.getElementById('mail');
  	const mailVal = mail.value;
     at = mailVal.indexOf("@");
     dot = mailVal.lastIndexOf(".");    
     if (at < 1 || dot - at < 2  || at === -1){
-    	$('input#mail').css({border: "10px solid #203590"}); //create CSS border when email input is incorrect
-        alert("Please enter a valid email!");
+    	$('input#mail').css({border: "5px solid #203590"}); //create CSS border when email input is incorrect
+        mail.placeholder = "Please Enter";
         return false;
     }
-    else{return true}
-}
+    else{return true;}
+};
 
 //Registered Activities validation
-function inputVal(){
+const inputVal = () => {
 	let howMany = $('input:checked').length;
 	if(howMany === 0){
 		alert("AT LEAST 1 activity must be checked!");
 		return false;
 	}
-	else{return true}
-} 
-
-//Card info validation 
-const cardVal = (ele, value) => {
-	if( Number(ele.val().length) < value ){
-	alert("Card No.: 13-15 digits, Zip Code: 5 digits!, CVV: 3 digits!");
-	}
-	else{return true}
+	else{return true;}
 };
 
-//Name validation
-const nameVal = () => {
-	if(name.value === ""){
-		alert("Basic Info: Name is empty!");
+//Card validations that prevent users from submitting if info is wrong
+const ccNumVal = () => {
+	if( (Number($('#cc-num').val().length)) < 13){
+		$('#cc-num').attr("placeholder", "13-16 Digits")
+		$('#cc-num').css({border: "5px solid #203590"});
 		return false;
 	}
-	else{return true}
+	else{return true;}
 };
-
-//Put all function validations in one function, then callback when submitting the form
-const allVal = () => {
-	nameVal();
-	emailVal();
-	inputVal();
-	cardVal($('#cvv'), 3);
-	cardVal($('#zip'), 5);
-	cardVal($('#cc-num'), 13);
-
-	//----EXTRA CREDIT: Program information based on error when form is submitted
-	if( (Number($('#cc-num').val().length)) > 15){
-		alert("Credit Card no. has " + (Number($('#cc-num').val().length) - 15) + " digits more than the range: 13-15 digits!" );
+const cvvVal = () => {
+	if((Number($('#cvv').val().length)) < 3){
+		$('#cvv').attr("placeholder", "3 Digits")
+		$('#cvv').css({border: "10px solid #203590"});
+		return false;
 	}
+	else{return true;}
+};
+const zipVal = () => {
+	if( (Number($('#zip').val().length)) < 5){
+		$('#zip').attr("placeholder", "5 Digits")
+		$('#zip').css({border: "10px solid #203590"});
+		return false;
+	}
+	else{return true;}
 };
 
-//Make sure html text fields are still present after javascript is turned off
+//Submit form and check for errors through vaidation functions coded above
 $('form').submit((e) => {
-	//allVal function callback
-	allVal();
-	e.preventDefault();
+//Check name
+	if(nameVal() === false || $(name).val() === ""){
+		e.preventDefault();
+	}
+//Check email
+	else if(emailVal() === false || $(mail).val() === ""){
+		e.preventDefault();
+	}
+//Check Registered checkboxes
+	else if(inputVal() === false){
+		e.preventDefault(); 
+	}
+//If no payment is selected, alert
+	else if(($('#payment')[0].selectedIndex) === 0){
+		alert("Please select form of payment!");
+		e.preventDefault();
+	}
+//Check Credit Card info
+	else if(($('#payment')[0].selectedIndex) === 1){
+		if($('#cc-num').val().length < 13){
+			//-----EXTRA CREDIT: Error presented on CC Num based on what was typed in, if less than 13 digits, computer will compute how many less than necessary
+			alert("Need " + Number(13 - (Number($('#cc-num').val().length))) + " more digits: 13-16 digits!" );
+			e.preventDefault();
+		}
+		else if(ccNumVal() === false){
+			e.preventDefault();
+		}
+		else if(zipVal() === false || $('#zip').val() === "" || cvvVal() === false || $('#cvv').val() === ""){
+			e.preventDefault();
+		}
+	}	
 });
 
+//After errors are corrected, form submits!
